@@ -29,6 +29,7 @@ namespace Inkspire.Controllers
             {
                 _db.categories.Add(obj);
                 _db.SaveChanges();
+                TempData["Success"] = "Category created successfully";
                 return RedirectToAction("Index");
             }
             return View();
@@ -48,5 +49,53 @@ namespace Inkspire.Controllers
             //}
 
         }
+        public IActionResult Edit(int categoryId)
+        {
+            if (categoryId == null || categoryId == 0)
+            {
+                return NotFound();
+            }
+            Category categoryFromDb = _db.categories.FirstOrDefault(i => i.Id == categoryId);
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+            return View(categoryFromDb);
+
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Category obj)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.categories.Update(obj);
+                _db.SaveChanges();
+                TempData["Success"] = "Category updated successfully";
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+
+
+        public IActionResult Delete(int categoryId)
+        {
+            if (categoryId == null || categoryId == 0)
+            {
+                return NotFound();
+            }
+            Category categoryFromDb = _db.categories.FirstOrDefault(i => i.Id == categoryId);
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+            _db.categories.Remove(categoryFromDb);
+            _db.SaveChanges();
+            TempData["Success"] = "Category Deleted successfully";
+            return RedirectToAction("Index");
+
+        }
+
+        
     }
 }
