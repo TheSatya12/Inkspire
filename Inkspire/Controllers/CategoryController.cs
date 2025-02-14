@@ -49,7 +49,7 @@ namespace Inkspire.Controllers
             //}
 
         }
-        public IActionResult Edit(int categoryId)
+        public IActionResult Edit(int? categoryId)
         {
             if (categoryId == null || categoryId == 0)
             {
@@ -78,7 +78,7 @@ namespace Inkspire.Controllers
         }
 
 
-        public IActionResult Delete(int categoryId)
+        public IActionResult Delete(int? categoryId)
         {
             if (categoryId == null || categoryId == 0)
             {
@@ -91,7 +91,7 @@ namespace Inkspire.Controllers
             }
             _db.categories.Remove(categoryFromDb);
             _db.SaveChanges();
-            TempData["Success"] = "Category Deleted successfully";
+            TempData["Error"] = $"category:{categoryFromDb.Name} deleted from DB";
             return RedirectToAction("Index");
 
         }
