@@ -11,10 +11,15 @@ namespace Inkspire.Models
         [Required]
         [DisplayName("Category Name")]
         [MaxLength(30)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [DisplayName("Display Order")]
         [Range(1,100,ErrorMessage ="Display order must be between 1-100")]
         public int DisplayOrder { get; set; }
+
+        public override string ToString()
+        {
+            return $"Category Id: {Id} Name: {Name} DisplayOrder : {DisplayOrder}";
+        }
     }
 }

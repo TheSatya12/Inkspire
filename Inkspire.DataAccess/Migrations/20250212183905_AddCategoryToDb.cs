@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Inkspire.Migrations
+namespace Inkspire.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class AddCategoryToDb : Migration

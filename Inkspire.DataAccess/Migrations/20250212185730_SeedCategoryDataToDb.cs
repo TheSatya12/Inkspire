@@ -4,7 +4,7 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Inkspire.Migrations
+namespace Inkspire.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class SeedCategoryDataToDb : Migration

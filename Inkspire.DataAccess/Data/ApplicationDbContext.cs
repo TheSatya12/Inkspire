@@ -1,7 +1,7 @@
 ﻿using Inkspire.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inkspire.Data
+namespace Inkspire.DataAccess.Data
 {
     public class ApplicationDbContext : DbContext
     {
