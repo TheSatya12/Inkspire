@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Inkspire.Filters.ActionFilters
 {
-    public class CategoryListActionFilter : IActionFilter
+    public class CategoryListActionFilter : IAsyncActionFilter
     {
         private readonly ILogger<CategoryListActionFilter> _logger;
 
@@ -11,16 +11,12 @@ namespace Inkspire.Filters.ActionFilters
         {
             _logger = logger;
         }
-        //After
-        public void OnActionExecuted(ActionExecutedContext context)
-        { 
-            _logger.LogInformation("CategoryList Action Filter : OnActionExecuted");
-        }
-
-        //Before
-        public void OnActionExecuting(ActionExecutingContext context)
+        
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             _logger.LogInformation("CategoryList Action Filter : OnActionExecuting");
+            await next();
+            _logger.LogInformation("CategoryList Action Filter : OnActionExecuted");
         }
     }
 }

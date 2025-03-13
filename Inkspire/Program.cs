@@ -1,4 +1,5 @@
 using Inkspire.DataAccess.Data;
+using Inkspire.Filters.ActionFilters;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -33,7 +34,12 @@ builder.Services.AddHttpLogging(options =>
 
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    var logger = builder.Services?.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
+
+    options.Filters.Add(new ResponseHeaderActionFilter(logger, "X-Custom-Global-Key", "Custom-Global-value",2));
+});
 
 
 

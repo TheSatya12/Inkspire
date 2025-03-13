@@ -1,4 +1,5 @@
 ﻿using Inkspire.DataAccess.Data;
+using Inkspire.Filters.ActionFilters;
 using Inkspire.Models;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -8,6 +9,8 @@ using System.Linq;
 
 namespace Inkspire.Controllers
 {
+    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new Object[] 
+    { "X-Custom-Controller-Key", "Custom-controller-Value",3 },Order =3)]
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -19,6 +22,9 @@ namespace Inkspire.Controllers
             _logger = logger;
             _diagnosticContest = diagnosticContext;
         }
+        [TypeFilter(typeof(CategoryListActionFilter),Order = 0)]
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new Object[] 
+        { "X-Custom-Key", "Custom-Value",1 },Order =1)]
         public IActionResult Index()
         {
             try
