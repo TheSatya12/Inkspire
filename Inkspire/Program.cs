@@ -1,4 +1,5 @@
 using Inkspire.DataAccess.Data;
+using Inkspire.DataAccess.Repository;
 using Inkspire.Filters.ActionFilters;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -46,6 +47,8 @@ builder.Services.AddControllersWithViews(options =>
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 var app = builder.Build();
 

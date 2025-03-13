@@ -1,4 +1,5 @@
 ﻿using Inkspire.DataAccess.Data;
+using Inkspire.DataAccess.Repository;
 using Inkspire.Filters.ActionFilters;
 using Inkspire.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -13,25 +14,25 @@ namespace Inkspire.Controllers
     { "X-Custom-Controller-Key", "Custom-controller-Value",3 },Order =3)]
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly ILogger<CategoryController> _logger;
         private readonly IDiagnosticContext _diagnosticContest;
-        public CategoryController(ApplicationDbContext db, ILogger<CategoryController> logger,IDiagnosticContext diagnosticContext)
+        public CategoryController(ICategoryRepository categoryRepository, ILogger<CategoryController> logger,IDiagnosticContext diagnosticContext)
         {
-            _db = db;
+            _categoryRepository = categoryRepository;
             _logger = logger;
             _diagnosticContest = diagnosticContext;
         }
         [TypeFilter(typeof(CategoryListActionFilter),Order = 0)]
         [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new Object[] 
         { "X-Custom-Key", "Custom-Value",1 },Order =1)]
-        public IActionResult Index()
+        public IActionResult Index(string searchQuery)
         {
             try
             {
-                _logger.LogInformation("Index Action method of Category Controller");
-                List<Category> categories = _db.categories.ToList();
-                _diagnosticContest.Set("Categories",categories);
+                _logger.LogInformation("Index action called.");
+                List<Category> categories = _categoryRepository.GetAllCategories(searchQuery);
+                ViewBag.SearchQuery = searchQuery; 
                 return View(categories);
             }
             catch (Exception ex)
@@ -40,6 +41,7 @@ namespace Inkspire.Controllers
                 return View(new List<Category>());
             }
         }
+
         public IActionResult Create()
         {
             return View();
@@ -50,13 +52,9 @@ namespace Inkspire.Controllers
         {
             try
             {
-                _logger.LogInformation("Create Action Method of Category Controller");
-                _logger.LogDebug($"Category obj: {objCategory}");
-
                 if (ModelState.IsValid)
                 {
-                    _db.categories.Add(objCategory);
-                    _db.SaveChanges();
+                    _categoryRepository.AddCategory(objCategory);
                     TempData["Success"] = "Category created successfully";
                     return RedirectToAction("Index");
                 }
@@ -69,22 +67,21 @@ namespace Inkspire.Controllers
                 return View(objCategory);
             }
         }
+
         public IActionResult Edit(int? categoryId)
         {
             try
             {
-                _logger.LogInformation("Edit Action Method of Category Controller");
-                _logger.LogDebug($"Category Id: {categoryId}");
                 if (categoryId == null || categoryId == 0)
                 {
                     return NotFound();
                 }
-                Category categoryFromDb = _db.categories.FirstOrDefault(i => i.Id == categoryId);
-                if (categoryFromDb == null)
+                var category = _categoryRepository.GetCategoryById(categoryId.Value);
+                if (category == null)
                 {
                     return NotFound();
                 }
-                return View(categoryFromDb);
+                return View(category);
             }
             catch (Exception ex)
             {
@@ -100,8 +97,7 @@ namespace Inkspire.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    _db.categories.Update(objCategory);
-                    _db.SaveChanges();
+                    _categoryRepository.UpdateCategory(objCategory);
                     TempData["Success"] = "Category updated successfully";
                     return RedirectToAction("Index");
                 }
@@ -123,14 +119,8 @@ namespace Inkspire.Controllers
                 {
                     return NotFound();
                 }
-                Category categoryFromDb = _db.categories.FirstOrDefault(i => i.Id == categoryId);
-                if (categoryFromDb == null)
-                {
-                    return NotFound();
-                }
-                _db.categories.Remove(categoryFromDb);
-                _db.SaveChanges();
-                TempData["Error"] = $"Category: {categoryFromDb.Name} deleted from DB";
+                _categoryRepository.DeleteCategory(categoryId.Value);
+                TempData["Error"] = "Category deleted successfully";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
