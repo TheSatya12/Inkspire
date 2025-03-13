@@ -48,7 +48,18 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddMemoryCache();
+
+builder.Services.AddScoped<CacheResourceFilter>();
+
+builder.Services.AddScoped<CustomIndexActonFilter>();
+
+builder.Services.AddScoped<CustomAsyncResultFilter>();
+
+
+
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 
 var app = builder.Build();
 

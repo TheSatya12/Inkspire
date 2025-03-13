@@ -26,6 +26,7 @@ namespace Inkspire.Controllers
         [TypeFilter(typeof(CategoryListActionFilter),Order = 0)]
         [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new Object[] 
         { "X-Custom-Key", "Custom-Value",1 },Order =1)]
+        [ServiceFilter(typeof(CustomIndexActonFilter))]
         public IActionResult Index(string searchQuery)
         {
             try
@@ -41,6 +42,34 @@ namespace Inkspire.Controllers
                 return View(new List<Category>());
             }
         }
+
+
+        [ServiceFilter(typeof(CustomAsyncResultFilter))]
+        [ServiceFilter(typeof(CacheResourceFilter))]
+        public JsonResult GetCategoryObj(int categoryId)
+        {
+            try
+            {
+                if (categoryId <= 0)
+                {
+                    return Json(new { success = false, message = "Invalid category ID." });
+                }
+
+                var category = _categoryRepository.GetCategoryById(categoryId);
+                if (category == null)
+                {
+                    return Json(new { success = false, message = "Category not found." });
+                }
+
+                return Json(new { success = true, data = category });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in GetCategoryObj: {ex.Message}");
+                return Json(new { success = false, message = "An error occurred while fetching the category." });
+            }
+        }
+
 
         public IActionResult Create()
         {
